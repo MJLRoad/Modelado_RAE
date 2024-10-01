@@ -1,27 +1,27 @@
+"""Este programa realiza una simulación basada en agentes
+de un sistema económico más realista, con transacciones donde se conserva
+el dinero.
+"""
+
 from economic_agent import CapitalistAgent_02
 import matplotlib.pyplot as plt
 import numpy as np
-import time
-
-start = time.time()
 
 #TODO Paso 1 (parametros)
+# Paso 1 (parametros)
 Nexp = 3
 N = int(5*(10**Nexp)) # número de agentes
 
-T = 400 # Temperatura de dinero
-interest_range = (0.19,0.21)
-
-M = N*T # cantidad total de dinero en el sistema
-
+T = 500 # esta cantidad garantiza que todos los agentes puedan fungir como prestamistas al inicio
 W = 10 # Salario
+M = N*T # cantidad total de dinero en el sistema
+interest_range = (0.15,0.20)
 
-texp = 1 # Se recomienda 6
+texp = 3
 t_steps = int(4*(10**texp)) # Pasos de tiempo para la simulación
 
-interest_range = (0.19,0.21)
 # Se crean a los agentes
-agents_list = np.array([CapitalistAgent_02(money=T) for i in range(N)]) # Todos los agentes tienen la misma cantidad de dinero
+agents_list = np.array([CapitalistAgent_02(money=T) for i in range(N)])
 A_idx = range(N)
 # Simulación
 for i in range(t_steps):
@@ -45,8 +45,6 @@ for i in range(t_steps):
     #TODO Paso 6 (Devolución)
     agents_list[e_idx].return_loan(to_agent=p_idx, agents_list=agents_list)
 
-end = time.time()
-print(f"Tiempo de ejecución: {end-start} s")
 # Datos para el histograma
 final_m_array = np.array([agent.money for agent in agents_list])
 nb_bins = int(max(final_m_array))
