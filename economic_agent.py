@@ -26,6 +26,33 @@ class Agent:
         else:
             pass
 
+class Agent_debtor:
+
+    def __init__(self, money, maximum_debt):
+        self.money = money
+        self.max_debt = maximum_debt
+
+    def pay(self, payee, transaction_type, system_avg):
+        delta_m = 0.0
+
+        if transaction_type == 'small_constant':
+            delta_m += 1.0
+        elif transaction_type == 'random_pair_average':
+            avg = (self.money + payee.money)/2
+            delta_m += (uniform(0.0,1.0))*avg
+        elif transaction_type == 'random_system_average':
+            delta_m += (uniform(0.0,1.0))*system_avg
+        elif transaction_type == 'proportional':
+            delta_m += 0.5*(self.money)
+        else:
+            pass
+
+        if self.money >= delta_m -  self.max_debt:
+            self.money -= delta_m
+            payee.money += delta_m
+        else:
+            pass
+
 class CapitalistAgent_01:
 
     def __init__(self, money, L, K, Q, R):
