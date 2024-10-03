@@ -38,16 +38,16 @@ class Agent_debtor:
         if transaction_type == 'small_constant':
             delta_m += 1.0
         elif transaction_type == 'random_pair_average':
-            avg = (self.money + payee.money)/2
+            avg = (self.money + payee.money)/2 + self.max_debt
             delta_m += (uniform(0.0,1.0))*avg
         elif transaction_type == 'random_system_average':
             delta_m += (uniform(0.0,1.0))*system_avg
         elif transaction_type == 'proportional':
-            delta_m += 0.5*(self.money)
+            delta_m += 0.5*(self.money + self.max_debt)
         else:
             pass
 
-        if self.money >= delta_m -  self.max_debt:
+        if (self.money + self.max_debt) >= delta_m:
             self.money -= delta_m
             payee.money += delta_m
         else:

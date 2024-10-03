@@ -9,18 +9,21 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Parámetros
-Nexp = 3
+Nexp = 4
 N = int(5*(10**Nexp)) # número de agentes
+
 Mexp = 5
 M = 5*10**Mexp # cantidad total de dinero en el sistema
-m_d = 800 # deuda máxima
+
+#m_d = 8 # deuda máxima
+m_d = 0
 T = M/N + m_d # temperatura de dinero
 
 texp = 5
 t_steps = int(4*(10**texp)) # Pasos de tiempo de la simulación
 # regla de intercambio
 exchange_rules = ['small_constant', 'random_pair_average', 'random_system_average']
-ex_order = 3
+ex_order = 1
 exchange_rule = exchange_rules[ex_order - 1]
 
 # Creamos a los agentes
@@ -37,15 +40,20 @@ for i in range(t_steps):
 
 # Datos para el histograma
 final_m_array = np.array([agent.money for agent in agents_list])
-nb_bins = int(max(final_m_array))
+nb_bins = int(max(final_m_array)) + m_d
+frq,edges = np.histogram(final_m_array, bins=nb_bins)
 
 # Distribución de Boltzmann-Gibbs
 m_values = np.linspace(-m_d,max(final_m_array),nb_bins)
 P_values = N*(1/T)*np.exp(-(m_values+m_d)/T)
 
-plt.hist(final_m_array, bins=range(nb_bins+2), label="Simulation", histtype='step')
+plt.bar(edges[:-1], frq, fill=False ,label=f"Model with debt (T = {T})")
 plt.plot(m_values, P_values, label="B-G distribution")
-plt.title(f"Money distribution (exchange rule: {exchange_rule})\n N = 5*10^{Nexp}, M = 10^{Mexp}, time = 4*10^{texp}")
+ttl = ""
+ttl += f"Money distribution (exchange rule: {exchange_rule})\n"
+ttl += f"N = 5*10^{Nexp}, M = 5*10^{Mexp}, time = 4*10^{texp}\n"
+ttl += f"Maximum debt = {m_d}"
+plt.title(ttl)
 plt.xlabel("Money m")
 plt.ylabel("Distribution of agents")
 #plt.yscale('log')
