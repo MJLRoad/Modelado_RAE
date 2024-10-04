@@ -26,6 +26,70 @@ class Agent:
         else:
             pass
 
+class Agent_02:
+
+    def __init__(self, money, alpha):
+        self.money = money
+        self.alpha = alpha
+
+    def pay(self, payee):
+        delta_m = (self.alpha)*(self.money)
+        self.money -= delta_m
+        payee.money += delta_m
+
+class Agent_03:
+
+    def __init__(self, money, lbda):
+        self.money = money
+        self.lbda = lbda
+
+    def pay(self, payee):
+        delta_m = (1-self.lbda)*(self.money - (uniform(0.0,1.0))*(self.money + payee.money))
+        if self.money >= delta_m:
+            self.money -= delta_m
+            payee.money += delta_m
+
+class Agent_04:
+
+    def __init__(self, money):
+        self.money = money
+
+    def pay(self, payee, transaction_type, system_avg, mediator):
+        delta_m = 0.0
+
+        if transaction_type == 'small_constant':
+            delta_m += 1.0
+        elif transaction_type == 'random_pair_average':
+            avg = (self.money + payee.money)/2
+            delta_m += (uniform(0.0,1.0))*avg
+        elif transaction_type == 'random_system_average':
+            delta_m += (uniform(0.0,1.0))*system_avg
+
+
+        if self.money >= delta_m:
+            self.money -= delta_m
+
+            mediator.collect_taxes(from_amount=delta_m)
+            delta_m *= (1.0 - mediator.tax_rate) # Cobro de impuestos
+
+            payee.money += delta_m
+
+class State:
+
+    def __init__(self, tax_rate):
+        self.money = 0
+        self.tax_rate = tax_rate
+
+    def collect_taxes(self, from_amount):
+        self.money += ((self.tax_rate)*from_amount)
+
+    def subsidize(self, to_agents):
+        dm = (self.money) / len(to_agents)
+        for agent in to_agents:
+            self.money -= dm
+            agent.money += dm
+
+
 class Agent_debtor:
 
     def __init__(self, money, maximum_debt):
