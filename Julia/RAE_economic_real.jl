@@ -239,7 +239,7 @@ function simulation_RM(N, M_avg, T )
 return wealth
 end
 
-xx = simulation_RM(1000, 1000, 1000)
+xx = simulation_RM(1000, 1000, 500)
 
 maximum(xx)
 minimum(xx)
