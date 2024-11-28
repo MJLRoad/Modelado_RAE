@@ -1,6 +1,8 @@
-from random import uniform
+from random import uniform,random
+from numpy.random import normal
+from math import sqrt
 
-class Agent:
+class Agent_BDY:
 
     def __init__(self, money):
         self.money = money
@@ -26,7 +28,7 @@ class Agent:
         else:
             pass
 
-class Agent_02:
+class Agent_multiplicative:
 
     def __init__(self, money, alpha):
         self.money = money
@@ -37,7 +39,8 @@ class Agent_02:
         self.money -= delta_m
         payee.money += delta_m
 
-class Agent_03:
+
+class Agent_CC:
 
     def __init__(self, money, lbda):
         self.money = money
@@ -49,7 +52,39 @@ class Agent_03:
             self.money -= delta_m
             payee.money += delta_m
 
-class Agent_04:
+
+class Agent_CCM:
+
+    def __init__(self, money):
+        self.money = money
+        self.lbda = random()
+
+    def pay(self, payee):
+        epsilon = uniform(0.0,1.0)
+        delta_m = (1-self.lbda)*(1-epsilon)*(self.money) - (1-payee.lbda)*epsilon*(payee.money)
+        if self.money >= delta_m:
+            self.money -= delta_m
+            payee.money += delta_m
+
+
+class Agent_CPT:
+
+    def __init__(self, money, lbda, var):
+        self.money = money
+        self.lbda = lbda
+        self.var = var
+
+    def pay(self, payee):
+        m_i,m_j = self.money,payee.money
+        mu,sigma = 0,sqrt(self.var)
+        eta_i,eta_j = normal(mu,sigma),normal(mu,sigma)
+        lbda = self.lbda
+        m_i_after, m_j_after = lbda*m_i+(1-lbda)*m_j+eta_i*m_i, lbda*m_j+(1-lbda)*m_i+eta_j*m_j
+        if m_i_after >= 0 and m_j_after >= 0:
+            self.money,payee.money = m_i_after,m_j_after
+
+
+class Agent_citizen:
 
     def __init__(self, money):
         self.money = money
@@ -64,7 +99,6 @@ class Agent_04:
             delta_m += (uniform(0.0,1.0))*avg
         elif transaction_type == 'random_system_average':
             delta_m += (uniform(0.0,1.0))*system_avg
-
 
         if self.money >= delta_m:
             self.money -= delta_m
