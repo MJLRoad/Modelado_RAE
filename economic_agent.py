@@ -368,3 +368,46 @@ class CapitalistAgent_03:
         if self.money >= delta_m:
             agents_list[to_agent].money += delta_m
             self.money -= delta_m
+
+
+class Agent_YS1st:
+
+    def __init__(self, money):
+        self.money = money
+        self.money_timeseries = [money]
+
+    def pay(self, payee):
+        epsilon = uniform(0.0,1.0)
+        alpha = 1 - 2*epsilon
+        delta_m = alpha*min(self.money,payee.money)
+        if self.money >= delta_m:
+            self.money -= delta_m
+            payee.money += delta_m
+
+    def observe_money(self):
+        self.money_timeseries.append(self.money)
+
+
+class Agent_YS1st_biased:
+
+    def __init__(self, money):
+        self.money = money
+        self.money_timeseries = [money]
+
+    def pay(self, payee):
+        epsilon = uniform(0.0,1.0)
+        alpha = 1 - 2*epsilon
+        m_min = min(self.money,payee.money)
+        
+        if self.money == m_min and alpha > 0: # Sesgo a favor del agente más pobre
+            alpha *= 0.8
+
+        delta_m = alpha*m_min
+
+        if self.money >= delta_m:
+            self.money -= delta_m
+            payee.money += delta_m
+
+    def observe_money(self):
+        self.money_timeseries.append(self.money)
+
